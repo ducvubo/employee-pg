@@ -1,43 +1,43 @@
-package EmployeeProto;
+package com.pg.employee.grpcjava.EmployeeProto;
+
+import com.pg.employee.grpcjava.api.Api;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.65.1)",
-    comments = "Source: employee.proto")
+
 @io.grpc.stub.annotations.GrpcGenerated
 public final class EmployeeServiceGprcGrpc {
 
   private EmployeeServiceGprcGrpc() {}
 
-  public static final java.lang.String SERVICE_NAME = "EmployeeProto.EmployeeServiceGprc";
+  public static final String SERVICE_NAME = "EmployeeProto.EmployeeServiceGprc";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<EmployeeProto.Employee.ReqFindOneEmployById,
-      api.Api.IBackendGRPC> getFindOneEmployeeByIdMethod;
+  private static volatile io.grpc.MethodDescriptor<Employee.ReqFindOneEmployById,
+      Api.IBackendGRPC> getFindOneEmployeeByIdMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "findOneEmployeeById",
-      requestType = EmployeeProto.Employee.ReqFindOneEmployById.class,
-      responseType = api.Api.IBackendGRPC.class,
+      requestType = Employee.ReqFindOneEmployById.class,
+      responseType = Api.IBackendGRPC.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<EmployeeProto.Employee.ReqFindOneEmployById,
-      api.Api.IBackendGRPC> getFindOneEmployeeByIdMethod() {
-    io.grpc.MethodDescriptor<EmployeeProto.Employee.ReqFindOneEmployById, api.Api.IBackendGRPC> getFindOneEmployeeByIdMethod;
+  public static io.grpc.MethodDescriptor<Employee.ReqFindOneEmployById,
+      Api.IBackendGRPC> getFindOneEmployeeByIdMethod() {
+    io.grpc.MethodDescriptor<Employee.ReqFindOneEmployById, Api.IBackendGRPC> getFindOneEmployeeByIdMethod;
     if ((getFindOneEmployeeByIdMethod = EmployeeServiceGprcGrpc.getFindOneEmployeeByIdMethod) == null) {
       synchronized (EmployeeServiceGprcGrpc.class) {
         if ((getFindOneEmployeeByIdMethod = EmployeeServiceGprcGrpc.getFindOneEmployeeByIdMethod) == null) {
           EmployeeServiceGprcGrpc.getFindOneEmployeeByIdMethod = getFindOneEmployeeByIdMethod =
-              io.grpc.MethodDescriptor.<EmployeeProto.Employee.ReqFindOneEmployById, api.Api.IBackendGRPC>newBuilder()
+              io.grpc.MethodDescriptor.<Employee.ReqFindOneEmployById, Api.IBackendGRPC>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "findOneEmployeeById"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  EmployeeProto.Employee.ReqFindOneEmployById.getDefaultInstance()))
+                  Employee.ReqFindOneEmployById.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  api.Api.IBackendGRPC.getDefaultInstance()))
+                  Api.IBackendGRPC.getDefaultInstance()))
               .setSchemaDescriptor(new EmployeeServiceGprcMethodDescriptorSupplier("findOneEmployeeById"))
               .build();
         }
@@ -52,7 +52,7 @@ public final class EmployeeServiceGprcGrpc {
   public static EmployeeServiceGprcStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcStub>() {
-        @java.lang.Override
+        @Override
         public EmployeeServiceGprcStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new EmployeeServiceGprcStub(channel, callOptions);
         }
@@ -67,7 +67,7 @@ public final class EmployeeServiceGprcGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcBlockingStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcBlockingStub>() {
-        @java.lang.Override
+        @Override
         public EmployeeServiceGprcBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new EmployeeServiceGprcBlockingStub(channel, callOptions);
         }
@@ -82,7 +82,7 @@ public final class EmployeeServiceGprcGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcFutureStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<EmployeeServiceGprcFutureStub>() {
-        @java.lang.Override
+        @Override
         public EmployeeServiceGprcFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new EmployeeServiceGprcFutureStub(channel, callOptions);
         }
@@ -96,8 +96,8 @@ public final class EmployeeServiceGprcGrpc {
 
     /**
      */
-    default void findOneEmployeeById(EmployeeProto.Employee.ReqFindOneEmployById request,
-        io.grpc.stub.StreamObserver<api.Api.IBackendGRPC> responseObserver) {
+    default void findOneEmployeeById(Employee.ReqFindOneEmployById request,
+                                     io.grpc.stub.StreamObserver<Api.IBackendGRPC> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getFindOneEmployeeByIdMethod(), responseObserver);
     }
   }
@@ -108,7 +108,7 @@ public final class EmployeeServiceGprcGrpc {
   public static abstract class EmployeeServiceGprcImplBase
       implements io.grpc.BindableService, AsyncService {
 
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+    @Override public final io.grpc.ServerServiceDefinition bindService() {
       return EmployeeServiceGprcGrpc.bindService(this);
     }
   }
@@ -123,7 +123,7 @@ public final class EmployeeServiceGprcGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected EmployeeServiceGprcStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EmployeeServiceGprcStub(channel, callOptions);
@@ -131,8 +131,8 @@ public final class EmployeeServiceGprcGrpc {
 
     /**
      */
-    public void findOneEmployeeById(EmployeeProto.Employee.ReqFindOneEmployById request,
-        io.grpc.stub.StreamObserver<api.Api.IBackendGRPC> responseObserver) {
+    public void findOneEmployeeById(Employee.ReqFindOneEmployById request,
+                                    io.grpc.stub.StreamObserver<Api.IBackendGRPC> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getFindOneEmployeeByIdMethod(), getCallOptions()), request, responseObserver);
     }
@@ -148,7 +148,7 @@ public final class EmployeeServiceGprcGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected EmployeeServiceGprcBlockingStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EmployeeServiceGprcBlockingStub(channel, callOptions);
@@ -156,7 +156,7 @@ public final class EmployeeServiceGprcGrpc {
 
     /**
      */
-    public api.Api.IBackendGRPC findOneEmployeeById(EmployeeProto.Employee.ReqFindOneEmployById request) {
+    public Api.IBackendGRPC findOneEmployeeById(Employee.ReqFindOneEmployById request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getFindOneEmployeeByIdMethod(), getCallOptions(), request);
     }
@@ -172,7 +172,7 @@ public final class EmployeeServiceGprcGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected EmployeeServiceGprcFutureStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new EmployeeServiceGprcFutureStub(channel, callOptions);
@@ -180,8 +180,8 @@ public final class EmployeeServiceGprcGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<api.Api.IBackendGRPC> findOneEmployeeById(
-        EmployeeProto.Employee.ReqFindOneEmployById request) {
+    public com.google.common.util.concurrent.ListenableFuture<Api.IBackendGRPC> findOneEmployeeById(
+        Employee.ReqFindOneEmployById request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getFindOneEmployeeByIdMethod(), getCallOptions()), request);
     }
@@ -202,21 +202,21 @@ public final class EmployeeServiceGprcGrpc {
       this.methodId = methodId;
     }
 
-    @java.lang.Override
-    @java.lang.SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_FIND_ONE_EMPLOYEE_BY_ID:
-          serviceImpl.findOneEmployeeById((EmployeeProto.Employee.ReqFindOneEmployById) request,
-              (io.grpc.stub.StreamObserver<api.Api.IBackendGRPC>) responseObserver);
+          serviceImpl.findOneEmployeeById((Employee.ReqFindOneEmployById) request,
+              (io.grpc.stub.StreamObserver<Api.IBackendGRPC>) responseObserver);
           break;
         default:
           throw new AssertionError();
       }
     }
 
-    @java.lang.Override
-    @java.lang.SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
@@ -232,8 +232,8 @@ public final class EmployeeServiceGprcGrpc {
           getFindOneEmployeeByIdMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              EmployeeProto.Employee.ReqFindOneEmployById,
-              api.Api.IBackendGRPC>(
+              Employee.ReqFindOneEmployById,
+              Api.IBackendGRPC>(
                 service, METHODID_FIND_ONE_EMPLOYEE_BY_ID)))
         .build();
   }
@@ -242,12 +242,12 @@ public final class EmployeeServiceGprcGrpc {
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     EmployeeServiceGprcBaseDescriptorSupplier() {}
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return EmployeeProto.Employee.getDescriptor();
+      return Employee.getDescriptor();
     }
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.ServiceDescriptor getServiceDescriptor() {
       return getFileDescriptor().findServiceByName("EmployeeServiceGprc");
     }
@@ -261,13 +261,13 @@ public final class EmployeeServiceGprcGrpc {
   private static final class EmployeeServiceGprcMethodDescriptorSupplier
       extends EmployeeServiceGprcBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final java.lang.String methodName;
+    private final String methodName;
 
-    EmployeeServiceGprcMethodDescriptorSupplier(java.lang.String methodName) {
+    EmployeeServiceGprcMethodDescriptorSupplier(String methodName) {
       this.methodName = methodName;
     }
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.MethodDescriptor getMethodDescriptor() {
       return getServiceDescriptor().findMethodByName(methodName);
     }
