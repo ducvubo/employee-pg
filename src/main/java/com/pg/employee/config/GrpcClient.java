@@ -1,7 +1,7 @@
 package com.pg.employee.config;
 
 
-import com.pg.employee.grpc.EmployeeProto.EmployeeServiceGprcGrpc;
+import com.pg.employee.grpcjava.EmployeeProto.EmployeeServiceGprcGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.Getter;
