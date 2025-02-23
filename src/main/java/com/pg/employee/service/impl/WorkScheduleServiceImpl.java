@@ -42,11 +42,11 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
     @Autowired
     private GrpcClient grpcClient;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-
-    @Autowired
-    private KafkaAdmin kafkaAdmin;
+//    @Autowired
+//    private KafkaTemplate<String, String> kafkaTemplate;
+//
+//    @Autowired
+//    private KafkaAdmin kafkaAdmin;
 
     @Autowired
     private WorkScheduleRepository workScheduleRepository;
@@ -57,29 +57,29 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
     @Autowired
     private LabelRepository labelRepository;
 
-    private boolean topicExists(String topicName) {
-        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            return adminClient.listTopics().names().get().contains(topicName);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // Tạo topic nếu chưa tồn tại
-    private void createTopic(String topicName) {
-        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            if (!topicExists(topicName)) {
-                NewTopic newTopic = new NewTopic(topicName, 3, (short) 1);
-                adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
-                System.out.println("✅ Created topic: " + topicName);
-            } else {
-                System.out.println("⚠️ Topic already exists: " + topicName);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
+//    private boolean topicExists(String topicName) {
+//        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+//            return adminClient.listTopics().names().get().contains(topicName);
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // Tạo topic nếu chưa tồn tại
+//    private void createTopic(String topicName) {
+//        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+//            if (!topicExists(topicName)) {
+//                NewTopic newTopic = new NewTopic(topicName, 3, (short) 1);
+//                adminClient.createTopics(Collections.singletonList(newTopic)).all().get();
+//                System.out.println("✅ Created topic: " + topicName);
+//            } else {
+//                System.out.println("⚠️ Topic already exists: " + topicName);
+//            }
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     @Override
@@ -134,13 +134,13 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .listEmployeeId(createWorkScheduleDto.getListEmployeeId())
                         .createdBy(AccountUtils.convertAccountToJson(account))
                         .build();
-                createTopic("create-work-schedule");
-                try {
-                    kafkaTemplate.send("create-work-schedule", "test-message 1").get();
-                    System.out.println("Message sent successfully!");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                createTopic("create-work-schedule");
+//                try {
+//                    kafkaTemplate.send("create-work-schedule", "test-message 1").get();
+//                    System.out.println("Message sent successfully!");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
                 return workScheduleRepository.save(workScheduleEntity);
             }
