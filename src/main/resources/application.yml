@@ -1,0 +1,51 @@
+server:
+  port: 10000
+  servlet:
+    context-path: /api/v1
+
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 200
+
+spring:
+  application:
+    name: employee
+
+  datasource:
+    url: jdbc:oracle:thin:@//160.191.51.57:1521/ORCLPDB1
+    username: EmployeePG
+    password: Duc17052003*
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      auto-commit: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  elasticsearch:
+    uris: https://160.191.245.32:9200
+    username: elastic
+    password: H-rPa*H42fjDNi9uiNNr
+    ssl:
+      verification-mode: none
+#
+#  kafka:
+#    bootstrap-servers: 160.191.245.32:19092, 160.191.245.32:29092, 160.191.245.32:39092
+#    consumer:
+#      group-id: employee
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+grpc:
+  client:
+    host: localhost
+    port: 8000
