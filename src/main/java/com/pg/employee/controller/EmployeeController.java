@@ -1,6 +1,6 @@
 package com.pg.employee.controller;
 
-import com.pg.employee.grpcjava.api.Api;
+import com.pg.employee.grpc.api.Api;
 import com.pg.employee.service.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

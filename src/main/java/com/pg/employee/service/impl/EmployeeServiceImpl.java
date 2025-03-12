@@ -1,7 +1,7 @@
 package com.pg.employee.service.impl;
 
-import com.pg.employee.grpcjava.EmployeeProto.Employee;
-import com.pg.employee.grpcjava.api.Api;
+import com.pg.employee.grpc.EmployeeProto.Employee;
+import com.pg.employee.grpc.api.Api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg.employee.config.GrpcClient;
 import com.pg.employee.service.EmployeeService;

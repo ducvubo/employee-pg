@@ -11,6 +11,11 @@ server:
 spring:
   application:
     name: employee
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
   datasource:
     url: jdbc:oracle:thin:@//160.191.51.57:1521/ORCLPDB1
@@ -33,17 +38,17 @@ spring:
     password: H-rPa*H42fjDNi9uiNNr
     ssl:
       verification-mode: none
-#
-#  kafka:
-#    bootstrap-servers: 160.191.245.32:19092, 160.191.245.32:29092, 160.191.245.32:39092
-#    consumer:
-#      group-id: employee
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  kafka:
+    bootstrap-servers: 160.191.245.32:19092, 160.191.245.32:29092, 160.191.245.32:39092
+    consumer:
+      group-id: employee
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 grpc:
   client:
