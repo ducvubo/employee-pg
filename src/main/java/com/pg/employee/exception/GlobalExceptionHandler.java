@@ -2,6 +2,9 @@ package com.pg.employee.exception;
 
 import com.pg.employee.dto.response.ApiResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,9 +19,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @Autowired
+    private com.pg.employee.utils.LoggingFilter loggingFilter;
+
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse<Object>> handlingException(RuntimeException exception) {
+    ResponseEntity<ApiResponse<Object>> handlingException(RuntimeException exception, HttpServletRequest request, HttpServletResponse response) {
         log.error("Exception: ", exception);
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, exception);
+
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
@@ -28,7 +38,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse<Object>> handlingAppException(AppException exception) {
+    ResponseEntity<ApiResponse<Object>> handlingAppException(AppException exception, HttpServletRequest request, HttpServletResponse response) {
+        log.error("Exception: ", exception);
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, exception);
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Object> apiResponse = new ApiResponse<Object>();
 
@@ -39,7 +53,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = BadRequestError.class)
-    ResponseEntity<ApiResponse<Object>> handlingBadRequestException(BadRequestError exception) {
+    ResponseEntity<ApiResponse<Object>> handlingBadRequestException(BadRequestError exception, HttpServletRequest request, HttpServletResponse response) {
+        log.error("Exception: ", exception);
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, exception);
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Object> apiResponse = new ApiResponse<Object>();
 
@@ -50,15 +68,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-     ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException ex) {
-        ApiResponse<Object> response = new ApiResponse<>();
-        response.setStatusCode(500);
-        response.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+     ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException ex, HttpServletRequest request, HttpServletResponse response) {
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, ex);
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(500);
+        apiResponse.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request, HttpServletResponse response) {
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, ex);
         return ResponseEntity.badRequest().body(ApiResponse.builder()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 //lấy thành 1 list message
@@ -67,7 +91,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse<Object>> handlingAccessDeniedException(AccessDeniedException exception) {
+    ResponseEntity<ApiResponse<Object>> handlingAccessDeniedException(AccessDeniedException exception, HttpServletRequest request, HttpServletResponse response) {
+        log.error("Exception: ", exception);
+        Long startTime = loggingFilter.getStartTime() != null ? loggingFilter.getStartTime() : System.currentTimeMillis();
+        String idUserGuest = request.getHeader("id_user_guest") != null ? request.getHeader("id_user_guest") : "Guest-" + java.util.UUID.randomUUID().toString();
+        loggingFilter.logError(request, response, idUserGuest, System.currentTimeMillis() - startTime, exception);
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode())
