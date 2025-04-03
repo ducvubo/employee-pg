@@ -134,13 +134,13 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .listEmployeeId(createWorkScheduleDto.getListEmployeeId())
                         .createdBy(AccountUtils.convertAccountToJson(account))
                         .build();
-                createTopic("create-work-schedule");
-                try {
-                    kafkaTemplate.send("create-work-schedule", "test-message 1").get();
-                    System.out.println("Message sent successfully!");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                createTopic("create-work-schedule");
+//                try {
+//                    kafkaTemplate.send("create-work-schedule", "test-message 1").get();
+//                    System.out.println("Message sent successfully!");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
                 return workScheduleRepository.save(workScheduleEntity);
             }
