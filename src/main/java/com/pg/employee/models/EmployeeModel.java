@@ -8,6 +8,9 @@ public class EmployeeModel {
     @JsonProperty("_id")
     private String _id;
 
+    @JsonProperty("accountId")
+    private String accountId;
+
     @JsonProperty("epl_restaurant_id")
     private String epl_restaurant_id;
 
@@ -35,6 +38,9 @@ public class EmployeeModel {
     // Getters & Setters (bắt buộc để Jackson hoạt động)
     public String get_id() { return _id; }
     public void set_id(String _id) { this._id = _id; }
+
+    public String getAccountId() { return accountId; }
+    public void setAccountId(String accountId) { this.accountId = accountId; }
 
     public String getEpl_restaurant_id() { return epl_restaurant_id; }
     public void setEpl_restaurant_id(String epl_restaurant_id) { this.epl_restaurant_id = epl_restaurant_id; }
@@ -64,6 +70,7 @@ public class EmployeeModel {
     public String toString() {
         return "Employee{" +
                 "_id='" + _id + '\'' +
+                ", accountId='" + accountId + '\'' +
                 ", epl_restaurant_id='" + epl_restaurant_id + '\'' +
                 ", epl_name='" + epl_name + '\'' +
                 ", epl_email='" + epl_email + '\'' +

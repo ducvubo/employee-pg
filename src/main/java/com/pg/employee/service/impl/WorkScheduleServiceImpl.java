@@ -1,5 +1,6 @@
 package com.pg.employee.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg.employee.grpc.EmployeeProto.Employee;
 import com.pg.employee.grpc.api.Api;
 import com.pg.employee.config.GrpcClient;
@@ -10,6 +11,8 @@ import com.pg.employee.entities.WorkScheduleEntity;
 import com.pg.employee.entities.WorkingShiftEntity;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
+import com.pg.employee.models.CreateNotification;
+import com.pg.employee.models.EmployeeModel;
 import com.pg.employee.repository.LabelRepository;
 import com.pg.employee.repository.WorkScheduleRepository;
 import com.pg.employee.repository.WorkingShiftRepository;
@@ -112,6 +115,7 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .build();
                 return workScheduleRepository.save(workScheduleEntity);
             } else {
+                List<String> listAccountId = new ArrayList<>();
                 for (String employeeId : createWorkScheduleDto.getListEmployeeId()) {
                     Employee.ReqFindOneEmployById request = Employee.ReqFindOneEmployById.newBuilder()
                             .setId(employeeId)
@@ -124,6 +128,13 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                     if (!status) {
                         throw new BadRequestError("Nhân viên không tồn tại");
                     }
+
+                    String jsonData = employee.getData(); // giả sử đây là chuỗi JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    EmployeeModel employeeData = objectMapper.readValue(jsonData, EmployeeModel.class);
+
+                    String employeeIdFromGrpc = employeeData.getAccountId();
+                    listAccountId.add(employeeIdFromGrpc);
                 }
                 WorkScheduleEntity workScheduleEntity = WorkScheduleEntity.builder()
                         .label(labelEntity.get())
@@ -134,13 +145,22 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .listEmployeeId(createWorkScheduleDto.getListEmployeeId())
                         .createdBy(AccountUtils.convertAccountToJson(account))
                         .build();
-//                createTopic("create-work-schedule");
-//                try {
-//                    kafkaTemplate.send("create-work-schedule", "test-message 1").get();
-//                    System.out.println("Message sent successfully!");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+               for (String accountId : listAccountId) {
+                   //format date thành 12:30 - 2023-10-01
+                   String date = new SimpleDateFormat("yyyy-MM-dd").format(ws_date);
+                   String content = "Bạn vừa được phân công vào ca làm việc mới " + workingShiftEntity.get().getWks_name() + ":" + workingShiftEntity.get().getWks_start_time().replaceFirst(":00$", "") + " - " + workingShiftEntity.get().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
+                    CreateNotification createNotification = CreateNotification.builder()
+                            .notiAccId(accountId)
+                            .notiTitle("Lịch làm việc mới")
+                            .notiContent(content)
+                            .notiType("WORK_SCHEDULE")
+                            .notiMetadata("no metadata")
+                            .sendObject("work_schedule")
+                            .build();
+                        String json = new ObjectMapper().writeValueAsString(createNotification);
+                        kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+                }
+
 
                 return workScheduleRepository.save(workScheduleEntity);
             }
@@ -201,7 +221,44 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                 workScheduleEntity.get().setListEmployeeId(null);
             } else {
                 workScheduleEntity.get().setListEmployeeId(updateWorkScheduleDto.getListEmployeeId());
-            }
+                    List<String> listAccountId = new ArrayList<>();
+                    for (String employeeId : updateWorkScheduleDto.getListEmployeeId()) {
+                        Employee.ReqFindOneEmployById request = Employee.ReqFindOneEmployById.newBuilder()
+                                .setId(employeeId)
+                                .setEplResId(account.getAccountRestaurantId())
+                                .build();
+
+                        Api.IBackendGRPC employee = grpcClient.getBlockingStub().findOneEmployeeById(request);
+
+                        boolean status = employee.getStatus();
+                        if (!status) {
+                            throw new BadRequestError("Nhân viên không tồn tại");
+                        }
+
+                        String jsonData = employee.getData(); // giả sử đây là chuỗi JSON
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        EmployeeModel employeeData = objectMapper.readValue(jsonData, EmployeeModel.class);
+
+                        String employeeIdFromGrpc = employeeData.getAccountId();
+                        listAccountId.add(employeeIdFromGrpc);
+                    }
+                    for (String accountId : listAccountId) {
+                        //format date thành 12:30 - 2023-10-01
+                        String date = new SimpleDateFormat("yyyy-MM-dd").format(ws_date);
+                        String content = "Bạn vừa được phân công vào ca làm việc mới " + workingShiftEntity.get().getWks_name() + ":" + workingShiftEntity.get().getWks_start_time().replaceFirst(":00$", "") + " - " + workingShiftEntity.get().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
+                        CreateNotification createNotification = CreateNotification.builder()
+                                .notiAccId(accountId)
+                                .notiTitle("Lịch làm việc mới")
+                                .notiContent(content)
+                                .notiType("WORK_SCHEDULE")
+                                .notiMetadata("no metadata")
+                                .sendObject("work_schedule")
+                                .build();
+                        String json = new ObjectMapper().writeValueAsString(createNotification);
+                        kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+                    }
+
+                }
             return workScheduleRepository.save(workScheduleEntity.get());
         }
         catch (Exception e) {
