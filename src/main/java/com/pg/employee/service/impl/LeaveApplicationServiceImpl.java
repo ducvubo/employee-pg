@@ -111,7 +111,7 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
         }
 
         String status = leaveApplicationEntity.getStatus();
-        if (!status.equals("DRAFT") && !status.equals("CANCEL")) {
+        if (!status.equals("DRAFT") && !status.equals("CANCELED")) {
             throw new BadRequestError("Chỉ có thể xóa đơn xin nghỉ ở trạng thái nháp hoặc hủy");
         }
 
