@@ -110,9 +110,10 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
             throw new BadRequestError("Không tìm thấy đơn xin nghỉ nào với id này");
         }
 
-        if (!leaveApplicationEntity.getStatus().equals("DRAFT")) {
-            throw new BadRequestError("Không thể xóa đơn xin nghỉ này vì nó không ở trạng thái nháp");
+        if (!status.equals("DRAFT") && !status.equals("CANCEL")) {
+            throw new BadRequestError("Chỉ có thể xóa đơn xin nghỉ ở trạng thái nháp hoặc hủy");
         }
+
 
         leaveApplicationRepository.delete(leaveApplicationEntity);
         return leaveApplicationEntity;
