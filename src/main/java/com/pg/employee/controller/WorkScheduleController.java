@@ -49,6 +49,16 @@ public class WorkScheduleController {
                 .build();
     }
 
+    @GetMapping("/list-employee-by-date/{date}")
+    ApiResponse<List<String>> getListEmployeeByDate(@PathVariable String date) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ApiResponse.<List<String>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get list employee by date successfully")
+                .data(workScheduleService.getListEmployeAssignedByDate(date, account))
+                .build();
+    }
+
     @PatchMapping
     ApiResponse<WorkScheduleEntity> updateWorkSchedule(@Valid @RequestBody UpdateWorkScheduleDto updateWorkScheduleDto) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

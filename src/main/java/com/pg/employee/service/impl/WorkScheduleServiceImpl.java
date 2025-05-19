@@ -31,6 +31,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date;
 
 @Service
 @Slf4j
@@ -329,5 +332,28 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
            log.error("Error get list work schedule: ", e);
            throw new RuntimeException(e);
        }
+    }
+
+    @Override
+    public List<String> getListEmployeAssignedByDate(String selectedDate, Account account) {
+        try {
+            selectedDate = selectedDate.replaceAll("\\s*\\(.*\\)$", "");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd yyyy HH:mm:ss 'GMT'XX", Locale.ENGLISH);
+            OffsetDateTime startDate = OffsetDateTime.parse(selectedDate, formatter);
+            Date startDateConvert = Date.from(startDate.toInstant());
+            List<WorkScheduleEntity> workSchedules = workScheduleRepository.DateWorkExist(
+                    account.getAccountRestaurantId(),
+                    startDateConvert
+            );
+
+            return workSchedules.stream()
+                    .flatMap(schedule -> schedule.getListEmployeeId().stream())
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+        catch (Exception e) {
+            log.error("Error get list employee assigned by date: ", e);
+            throw new RuntimeException(e);
+        }
     }
 }

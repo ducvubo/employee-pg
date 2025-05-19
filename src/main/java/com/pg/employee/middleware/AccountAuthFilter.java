@@ -68,7 +68,7 @@ public class AccountAuthFilter extends OncePerRequestFilter {
         if (excludedUrls.contains(requestURI)) {
 
             ObjectMapper objectMapper = new ObjectMapper();
-            Account account = objectMapper.convertValue(new Account("1","vminhduc8@gmail.com","**********","user","admin","1234567890","1234567890"), Account.class);
+            Account account = objectMapper.convertValue(new Account("1","vminhduc8@gmail.com","**********","user","admin","677aac262fc0d1491a5ca032","1234567890"), Account.class);
             SecurityContextHolder.getContext().setAuthentication(new AccountAuthenticationToken(account));
 
             filterChain.doFilter(request, response);
