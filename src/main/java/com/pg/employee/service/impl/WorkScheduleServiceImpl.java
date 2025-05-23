@@ -278,9 +278,10 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
             if (workScheduleEntity.isEmpty()) {
                 throw new BadRequestError("Lịch làm việc không tồn tại");
             }
-            workScheduleEntity.get().setIsDeleted(1);
-            workScheduleEntity.get().setDeletedAt(new Date());
-            workScheduleEntity.get().setDeletedBy(AccountUtils.convertAccountToJson(account));
+//            workScheduleEntity.get().setIsDeleted(1);
+//            workScheduleEntity.get().setDeletedAt(new Date());
+//            workScheduleEntity.get().setDeletedBy(AccountUtils.convertAccountToJson(account));
+            workScheduleRepository.deleteById(wsId);
             return workScheduleRepository.save(workScheduleEntity.get());
         }
         catch (Exception e) {
@@ -353,6 +354,24 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
         }
         catch (Exception e) {
             log.error("Error get list employee assigned by date: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public WorkScheduleEntity updateStatusWorkSchedule(String ws_id, String status, Account account) {
+        try {
+            UUID wsId = UUID.fromString(ws_id);
+            Optional<WorkScheduleEntity> workScheduleEntity = workScheduleRepository.findByWsIdAndWsResId(wsId, account.getAccountRestaurantId());
+            if (workScheduleEntity.isEmpty()) {
+                throw new BadRequestError("Lịch làm việc không tồn tại");
+            }
+            workScheduleEntity.get().setWs_status(status);
+            workScheduleEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
+            return workScheduleRepository.save(workScheduleEntity.get());
+        }
+        catch (Exception e) {
+            log.error("Error update status work schedule: ", e);
             throw new RuntimeException(e);
         }
     }

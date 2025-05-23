@@ -61,10 +61,10 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Object> apiResponse = new ApiResponse<Object>();
 
-        apiResponse.setStatusCode(errorCode.getCode());
+        apiResponse.setStatusCode(400);
         apiResponse.setMessage(exception.getMessage());
 
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        return ResponseEntity.status(400).body(apiResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)

@@ -2,18 +2,22 @@ package com.pg.employee.config;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
-import jakarta.annotation.PreDestroy;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jakarta.annotation.PreDestroy;
+
 @Configuration
 public class RedisConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
-    private static final String REDIS_URL = "rediss://default:AVNS_nzu46kPwrfQYp6Cc9Np@caching-32653a4c-vminhduc8-88ed.e.aivencloud.com:13891";
+    private static final String REDIS_URL = "redis://myusername:mypassword@160.187.229.179:6379";
 
     private RedisClient redisClient;
     private StatefulRedisConnection<String, String> redisConnection;

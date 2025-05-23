@@ -17,4 +17,5 @@ public interface WorkScheduleService {
     WorkScheduleEntity restoreWorkSchedule(String ws_id,Account account);
     List<WorkScheduleEntity> getListWorkSchedule(String start_date, String end_date,Account account);
     List<String> getListEmployeAssignedByDate(String selectedDate, Account account);
+    WorkScheduleEntity updateStatusWorkSchedule(String ws_id, String status, Account account);
 }

@@ -20,7 +20,7 @@ public class CreateWorkScheduleDto {
     @NotBlank(message = "Ngày làm việc không được để trống")
     private String ws_date;
 
-    @NotBlank(message = "Note không được để trống")
+//    @NotBlank(message = "Note không được để trống")
     private String ws_note;
 
     private List<String> listEmployeeId;

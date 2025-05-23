@@ -69,6 +69,16 @@ public class WorkScheduleController {
                 .build();
     }
 
+    @PatchMapping("/update-status/{ws_id}/{status}")
+    ApiResponse<WorkScheduleEntity> updateStatusWorkSchedule(@PathVariable String ws_id, @PathVariable String status) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ApiResponse.<WorkScheduleEntity>builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Update work schedule status successfully")
+                .data(workScheduleService.updateStatusWorkSchedule(ws_id, status, account))
+                .build();
+    }
+
     @PatchMapping("restore/{ws_id}")
     ApiResponse<WorkScheduleEntity> restoreWorkSchedule(@PathVariable String ws_id) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

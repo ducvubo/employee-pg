@@ -38,8 +38,11 @@ public class WorkScheduleEntity {
     @Column(name = "ws_date")
     private Date ws_date;
 
+    @Column(name = "ws_status", length = 1, columnDefinition = "CHAR(1) DEFAULT 'F'") // Trạng thái ca làm việc: T là đã phát ca, F là chưa phát ca
+    private String ws_status;
+
     @Lob
-    @Column(name = "ws_note", columnDefinition = "CLOB")
+    @Column(name = "ws_note", columnDefinition = "CLOB", nullable = true)
     private String ws_note;
 
     @ElementCollection

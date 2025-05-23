@@ -35,4 +35,12 @@ public interface WorkScheduleRepository extends JpaRepository<WorkScheduleEntity
     List<WorkScheduleEntity> DateWorkExist(
             @Param("ws_res_id") String ws_res_id,
             @Param("ws_date") Date ws_date);
+
+    //    findByWsDateAndWsResId
+    @Query("SELECT w FROM WorkScheduleEntity w WHERE w.ws_res_id = :ws_res_id AND w.ws_date BETWEEN :startOfDay AND :endOfDay AND w.ws_status = 'T'")
+    List<WorkScheduleEntity> findByWsDateOnly(
+        @Param("startOfDay") Date startOfDay,
+        @Param("endOfDay") Date endOfDay,
+        @Param("ws_res_id") String wsResId);
+
 }
