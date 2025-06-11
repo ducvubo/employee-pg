@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -30,7 +27,7 @@ public class TimeSheetServiceImpl implements TimeSheetService {
     private WorkScheduleRepository workScheduleRepository;
 
     @Override
-    public TimeSheetEntity createTimeSheet(CreateTimeSheetDto createTimeSheetDto, Account account) {
+    public WorkScheduleEntity createTimeSheet(CreateTimeSheetDto createTimeSheetDto, Account account) {
         try {
             //tìm work shcedule theo ws_date và ws_res_id
             String employeeId = createTimeSheetDto.getTsEmployeeId();
@@ -54,6 +51,7 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                 throw new BadRequestError("Không tìm thấy lịch làm việc nào cho ngày này");
             }
 
+
             Optional<WorkScheduleEntity> matchedSchedule = workScheduleEntities.stream()
                     .filter(schedule -> schedule.getListEmployeeId() != null && schedule.getListEmployeeId().contains(employeeId))
                     .findFirst();
@@ -63,6 +61,11 @@ public class TimeSheetServiceImpl implements TimeSheetService {
             }
 
             WorkScheduleEntity foundSchedule = matchedSchedule.get();
+
+            if ("F".equals(foundSchedule.getWs_status())) {
+                throw new BadRequestError("Nhân viên không có ca làm việc trong ngày này");
+            }
+
 
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -102,7 +105,7 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                 timeSheetEntity.setUpdatedAt(new Date());
 
                 timeSheetRepository.save(timeSheetEntity); // update
-                return timeSheetEntity;
+                return foundSchedule;
             } else {
                 TimeSheetEntity timeSheetEntity = TimeSheetEntity.builder()
                         .tsCheckIn(isFirstHalf ? checkInDate : null)
@@ -114,10 +117,25 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                         .updatedAt(new Date())
                         .build();
                 timeSheetRepository.save(timeSheetEntity);
-                return timeSheetEntity;
+                return foundSchedule;
             }
         } catch (Exception e) {
             log.error("Error create work schedule: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<TimeSheetEntity> getTimeSheetsByWorkScheduleId(String wsId, Account account) {
+        try {
+            UUID wsIdUuid = UUID.fromString(wsId);
+            Optional<WorkScheduleEntity> workScheduleEntity = workScheduleRepository.findById(wsIdUuid);
+            if (workScheduleEntity.isEmpty()) {
+                throw new BadRequestError("Lịch làm việc không tồn tại");
+            }
+            return timeSheetRepository.findByTsWsIdAndTsResId(workScheduleEntity.get(), account.getAccountRestaurantId());
+        } catch (Exception e) {
+            log.error("Error get time sheets by work schedule id: ", e);
             throw new RuntimeException(e);
         }
     }

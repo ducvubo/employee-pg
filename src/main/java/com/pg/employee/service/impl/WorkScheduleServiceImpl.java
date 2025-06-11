@@ -114,6 +114,7 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .ws_date(ws_date)
                         .ws_note(createWorkScheduleDto.getWs_note())
                         .listEmployeeId(null)
+                        .ws_status("F") // Trạng thái ca làm việc: T là đã phát ca, F là chưa phát ca
                         .createdBy(AccountUtils.convertAccountToJson(account))
                         .build();
                 return workScheduleRepository.save(workScheduleEntity);
@@ -144,6 +145,7 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .workingShift(workingShiftEntity.get())
                         .ws_res_id(account.getAccountRestaurantId())
                         .ws_date(ws_date)
+                        .ws_status("F") // Trạng thái ca làm việc: T là đã phát ca, F là chưa phát ca
                         .ws_note(createWorkScheduleDto.getWs_note())
                         .listEmployeeId(createWorkScheduleDto.getListEmployeeId())
                         .createdBy(AccountUtils.convertAccountToJson(account))

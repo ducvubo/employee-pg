@@ -12,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/time-sheet")
@@ -26,12 +25,24 @@ public class TimeSheetController {
     private TimeSheetService timeSheetService;
 
     @PostMapping
-    ApiResponse<TimeSheetEntity> createTimeSheet(@Valid @RequestBody CreateTimeSheetDto createTimeSheetDto) {
+    ApiResponse<WorkScheduleEntity> createTimeSheet(@Valid @RequestBody CreateTimeSheetDto createTimeSheetDto) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ApiResponse.<TimeSheetEntity>builder()
+        return ApiResponse.<WorkScheduleEntity>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message("Create time sheet successfully")
                 .data(timeSheetService.createTimeSheet(createTimeSheetDto, account))
+                .build();
+    }
+
+    @GetMapping("/get-by-work-schedule/{workScheduleId}")
+    public ApiResponse<List<TimeSheetEntity>> getByWorkSchedule(
+            @PathVariable("workScheduleId") String workScheduleId) {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<TimeSheetEntity> data = timeSheetService.getTimeSheetsByWorkScheduleId(workScheduleId, account);
+        return ApiResponse.<List<TimeSheetEntity>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get timesheets by work schedule ID successfully")
+                .data(data)
                 .build();
     }
 }

@@ -41,7 +41,7 @@ public class RedisConfig {
             while (true) {
                 try {
                     if (connection.isOpen()) {
-                        logger.info("connection redis - Connection status: connected");
+//                        logger.info("connection redis - Connection status: connected");
                         RedisCommands<String, String> sync = connection.sync();
                         sync.ping(); // Kiểm tra kết nối
                     }
