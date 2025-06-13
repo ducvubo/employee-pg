@@ -43,4 +43,19 @@ public interface WorkScheduleRepository extends JpaRepository<WorkScheduleEntity
         @Param("endOfDay") Date endOfDay,
         @Param("ws_res_id") String wsResId);
 
+//    findByListEmployeeIdAndWsResIdAndIsDeletedAndWsDateBetween
+
+    @Query("SELECT w FROM WorkScheduleEntity w " +
+            "LEFT JOIN FETCH w.listEmployeeId " +
+            "WHERE :employeeId MEMBER OF w.listEmployeeId " +
+            "AND w.ws_res_id = :ws_res_id " +
+            "AND w.isDeleted = :isDeleted " +
+            "AND w.ws_status = 'T' " +
+            "AND w.ws_date BETWEEN :startDate AND :endDate")
+    List<WorkScheduleEntity> findByListEmployeeIdAndWsResIdAndIsDeletedAndWsDateBetween(
+            @Param("employeeId") String employeeId,
+            @Param("ws_res_id") String ws_res_id,
+            @Param("isDeleted") int isDeleted,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
 }

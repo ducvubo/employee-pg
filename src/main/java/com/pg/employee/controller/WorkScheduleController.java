@@ -89,6 +89,16 @@ public class WorkScheduleController {
                 .build();
     }
 
+    @GetMapping("/by-employee")
+    ApiResponse<List<WorkScheduleEntity>> getListWorkScheduleByEmployee() {
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ApiResponse.<List<WorkScheduleEntity>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get list work schedule by employee successfully")
+                .data(workScheduleService.getListWorkScheduleByEmployee(account))
+                .build();
+    }
+
     @DeleteMapping("/{ws_id}")
     ApiResponse<WorkScheduleEntity> deleteWorkSchedule(@PathVariable String ws_id) {
         Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

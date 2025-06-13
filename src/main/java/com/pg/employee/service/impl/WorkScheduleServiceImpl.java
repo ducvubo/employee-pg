@@ -377,4 +377,26 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<WorkScheduleEntity> getListWorkScheduleByEmployee(Account account) {
+        //lấy tất cả lịch làm việc trong tháng hện tại của nhân viên theo employeeId
+        try {
+            String employeeId = account.getAccountEmployeeId();
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.set(Calendar.DAY_OF_MONTH, 1); // Đặt ngày về đầu tháng
+            Date startOfMonth = calendar.getTime();
+
+            calendar.add(Calendar.MONTH, 1); // Thêm một tháng
+            Date endOfMonth = calendar.getTime();
+
+            return workScheduleRepository.findByListEmployeeIdAndWsResIdAndIsDeletedAndWsDateBetween(
+                    employeeId, account.getAccountRestaurantId(), 0, startOfMonth, endOfMonth);
+        } catch (Exception e) {
+            log.error("Error get list work schedule by employee: ", e);
+            throw new RuntimeException(e);
+        }
+    }
 }

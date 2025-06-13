@@ -25,4 +25,5 @@ public interface LeaveApplicationService {
     LeaveApplicationEntity approveLeaveApplication(RestaurantLeaveApplicationDto restaurantLeaveApplicationDto,Account account);
     LeaveApplicationEntity rejectLeaveApplication(RestaurantLeaveApplicationDto restaurantLeaveApplicationDto, Account account);
     LeaveApplicationEntity cancelLeaveApplication(String id, Account account);
+
 }
