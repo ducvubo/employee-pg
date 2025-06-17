@@ -16,7 +16,7 @@ public class GrpcClient {
     private final EmployeeServiceGprcGrpc.EmployeeServiceGprcBlockingStub blockingStub;
 
     public GrpcClient() {
-        this.channel = ManagedChannelBuilder.forAddress("160.191.245.32", 8000)
+        this.channel = ManagedChannelBuilder.forAddress("160.191.245.32", 30800)
                 .usePlaintext()
                 .build();
         this.blockingStub = EmployeeServiceGprcGrpc.newBlockingStub(channel);
