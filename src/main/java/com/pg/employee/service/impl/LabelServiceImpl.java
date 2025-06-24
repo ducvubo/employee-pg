@@ -10,7 +10,7 @@ import com.pg.employee.entities.LabelEntity;
 import com.pg.employee.enums.EnumStatus;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
-import com.pg.employee.models.CreateNotification;
+import com.pg.employee.models.CreateNotificationRestaurant;
 import com.pg.employee.repository.LabelRepository;
 import com.pg.employee.service.LabelService;
 import com.pg.employee.utils.AccountUtils;
@@ -58,8 +58,8 @@ public class LabelServiceImpl implements LabelService {
 
             labelRepository.save(labelEntity);
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Nhãn làm việc mới")
                     .notiContent("Nhãn làm việc mới '" + createLabelDto.getLb_name())
                     .notiType("label")
@@ -106,8 +106,8 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             labelRepository.save(labelEntity.get());
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Nhãn làm việc cập nhật")
                     .notiContent("Nhãn làm việc '" + updateLabelDto.getLb_name() + "' đã được cập nhật")
                     .notiType("label")
@@ -136,8 +136,8 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setDeletedBy(AccountUtils.convertAccountToJson(account));
             labelEntity.get().setDeletedAt(new Date(System.currentTimeMillis()));
             labelRepository.save(labelEntity.get());
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Nhãn làm việc đã xóa")
                     .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được xóa")
                     .notiType("label")
@@ -165,8 +165,8 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setDeletedBy(null);
             labelEntity.get().setDeletedAt(null);
             labelRepository.save(labelEntity.get());
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Nhãn làm việc đã khôi phục")
                     .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được khôi phục")
                     .notiType("label")
@@ -197,8 +197,8 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             labelRepository.save(labelEntity.get());
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Nhãn làm việc cập nhật trạng thái")
                     .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được cập nhật trạng thái")
                     .notiType("label")

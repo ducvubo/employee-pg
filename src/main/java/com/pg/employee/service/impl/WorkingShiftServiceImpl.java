@@ -8,7 +8,7 @@ import com.pg.employee.dto.response.ResPagination;
 import com.pg.employee.entities.WorkingShiftEntity;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
-import com.pg.employee.models.CreateNotification;
+import com.pg.employee.models.CreateNotificationRestaurant;
 import com.pg.employee.repository.LabelRepository;
 import com.pg.employee.repository.WorkingShiftRepository;
 import com.pg.employee.service.WorkingShiftService;
@@ -58,8 +58,8 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
                     .build();
             workingShiftRepository.save(workingShiftEntity);
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Ca làm việc mới")
                     .notiContent("Ca làm việc mới '" + createWorkingShiftDto.getWks_name())
                     .notiType("label")
@@ -107,8 +107,8 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             workingShiftRepository.save(workingShiftEntity.get());
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Cập nhật ca làm việc")
                     .notiContent("Ca làm việc '" + updateWorkingShiftDto.getWks_name() + "' đã được cập nhật")
                     .notiType("label")
@@ -138,8 +138,8 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setDeletedAt(new Date(System.currentTimeMillis()));
             workingShiftRepository.save(workingShiftEntity.get());
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Xóa ca làm việc")
                     .notiContent("Ca làm việc '" + workingShiftEntity.get().getWks_name() + "' đã được xóa")
                     .notiType("label")
@@ -169,8 +169,8 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setDeletedAt(null);
             workingShiftRepository.save(workingShiftEntity.get());
 
-            CreateNotification createNotification = CreateNotification.builder()
-                    .notiAccId(account.getAccountRestaurantId())
+            CreateNotificationRestaurant createNotification = CreateNotificationRestaurant.builder()
+                    .restaurantId(account.getAccountRestaurantId())
                     .notiTitle("Khôi phục ca làm việc")
                     .notiContent("Ca làm việc '" + workingShiftEntity.get().getWks_name() + "' đã được khôi phục")
                     .notiType("label")
