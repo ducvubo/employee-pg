@@ -150,21 +150,21 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
                         .listEmployeeId(createWorkScheduleDto.getListEmployeeId())
                         .createdBy(AccountUtils.convertAccountToJson(account))
                         .build();
-               for (String accountId : listAccountId) {
-                   //format date thành 12:30 - 2023-10-01
-                   String date = new SimpleDateFormat("yyyy-MM-dd").format(ws_date);
-                   String content = "Bạn vừa được phân công vào ca làm việc mới " + workingShiftEntity.get().getWks_name() + ":" + workingShiftEntity.get().getWks_start_time().replaceFirst(":00$", "") + " - " + workingShiftEntity.get().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
-                    CreateNotification createNotification = CreateNotification.builder()
-                            .notiAccId(accountId)
-                            .notiTitle("Lịch làm việc mới")
-                            .notiContent(content)
-                            .notiType("WORK_SCHEDULE")
-                            .notiMetadata("no metadata")
-                            .sendObject("work_schedule")
-                            .build();
-                        String json = new ObjectMapper().writeValueAsString(createNotification);
-                        kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
-                }
+//               for (String accountId : listAccountId) {
+//                   //format date thành 12:30 - 2023-10-01
+//                   String date = new SimpleDateFormat("yyyy-MM-dd").format(ws_date);
+//                   String content = "Bạn vừa được phân công vào ca làm việc mới " + workingShiftEntity.get().getWks_name() + ":" + workingShiftEntity.get().getWks_start_time().replaceFirst(":00$", "") + " - " + workingShiftEntity.get().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
+//                    CreateNotification createNotification = CreateNotification.builder()
+//                            .notiAccId(accountId)
+//                            .notiTitle("Lịch làm việc mới")
+//                            .notiContent(content)
+//                            .notiType("WORK_SCHEDULE")
+//                            .notiMetadata("no metadata")
+//                            .sendObject("work_schedule")
+//                            .build();
+//                        String json = new ObjectMapper().writeValueAsString(createNotification);
+//                        kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+//                }
 
 
                 return workScheduleRepository.save(workScheduleEntity);
@@ -370,6 +370,43 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
             }
             workScheduleEntity.get().setWs_status(status);
             workScheduleEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
+
+            // Gửi thông báo đến nhân viên
+            if (status.equals("T")) {
+                for (String employeeId : workScheduleEntity.get().getListEmployeeId()) {
+                    Employee.ReqFindOneEmployById request = Employee.ReqFindOneEmployById.newBuilder()
+                            .setId(employeeId)
+                            .setEplResId(account.getAccountRestaurantId())
+                            .build();
+
+                    Api.IBackendGRPC employee = grpcClient.getBlockingStub().findOneEmployeeById(request);
+
+                    boolean statusEmployee = employee.getStatus();
+                    if (!statusEmployee) {
+                        throw new BadRequestError("Nhân viên không tồn tại");
+                    }
+
+                    String jsonData = employee.getData(); // giả sử đây là chuỗi JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    EmployeeModel employeeData = objectMapper.readValue(jsonData, EmployeeModel.class);
+
+                    String employeeIdFromGrpc = employeeData.getAccountId();
+                    //format date thành 12:30 - 2023-10-01
+                    String date = new SimpleDateFormat("yyyy-MM-dd").format(workScheduleEntity.get().getWs_date());
+                    String content = "Bạn vửa có lịch làm việc: " + workScheduleEntity.get().getWorkingShift().getWks_name() + ":" + workScheduleEntity.get().getWorkingShift().getWks_start_time().replaceFirst(":00$", "") + " - " + workScheduleEntity.get().getWorkingShift().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
+                    CreateNotification createNotification = CreateNotification.builder()
+                            .notiAccId(employeeIdFromGrpc)
+                            .notiTitle("Lịch làm việc mới")
+                            .notiContent(content)
+                            .notiType("WORK_SCHEDULE")
+                            .notiMetadata("no metadata")
+                            .sendObject("work_schedule")
+                            .build();
+                    String json = new ObjectMapper().writeValueAsString(createNotification);
+                    kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+                }
+            }
+
             return workScheduleRepository.save(workScheduleEntity.get());
         }
         catch (Exception e) {

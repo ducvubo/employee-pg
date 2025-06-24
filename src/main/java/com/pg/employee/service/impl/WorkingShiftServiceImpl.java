@@ -1,5 +1,6 @@
 package com.pg.employee.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg.employee.dto.request.workingShift.CreateWorkingShiftDto;
 import com.pg.employee.dto.request.workingShift.UpdateWorkingShiftDto;
 import com.pg.employee.dto.response.MetaPagination;
@@ -7,6 +8,7 @@ import com.pg.employee.dto.response.ResPagination;
 import com.pg.employee.entities.WorkingShiftEntity;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
+import com.pg.employee.models.CreateNotification;
 import com.pg.employee.repository.LabelRepository;
 import com.pg.employee.repository.WorkingShiftRepository;
 import com.pg.employee.service.WorkingShiftService;
@@ -16,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,6 +37,12 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
     @Autowired
     private LabelRepository labelRepository;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private KafkaAdmin kafkaAdmin;
+
     @Override
     public WorkingShiftEntity createWorkingShift(CreateWorkingShiftDto createWorkingShiftDto, Account account) {
         try{
@@ -47,6 +57,17 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
                     .isDeleted(0)
                     .build();
             workingShiftRepository.save(workingShiftEntity);
+
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Ca làm việc mới")
+                    .notiContent("Ca làm việc mới '" + createWorkingShiftDto.getWks_name())
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
             return workingShiftEntity;
         }catch (Exception e) {
             log.error("Error: ", e);
@@ -86,6 +107,17 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             workingShiftRepository.save(workingShiftEntity.get());
 
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Cập nhật ca làm việc")
+                    .notiContent("Ca làm việc '" + updateWorkingShiftDto.getWks_name() + "' đã được cập nhật")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
             return workingShiftEntity.get();
         }catch (Exception e) {
             log.error("Error: ", e);
@@ -105,6 +137,18 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setDeletedBy(AccountUtils.convertAccountToJson(account));
             workingShiftEntity.get().setDeletedAt(new Date(System.currentTimeMillis()));
             workingShiftRepository.save(workingShiftEntity.get());
+
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Xóa ca làm việc")
+                    .notiContent("Ca làm việc '" + workingShiftEntity.get().getWks_name() + "' đã được xóa")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
             return workingShiftEntity.get();
         }catch (Exception e) {
             log.error("Error: ", e);
@@ -124,6 +168,18 @@ public class WorkingShiftServiceImpl implements WorkingShiftService {
             workingShiftEntity.get().setDeletedBy(null);
             workingShiftEntity.get().setDeletedAt(null);
             workingShiftRepository.save(workingShiftEntity.get());
+
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Khôi phục ca làm việc")
+                    .notiContent("Ca làm việc '" + workingShiftEntity.get().getWks_name() + "' đã được khôi phục")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
             return workingShiftEntity.get();
         }catch (Exception e) {
             log.error("Error: ", e);

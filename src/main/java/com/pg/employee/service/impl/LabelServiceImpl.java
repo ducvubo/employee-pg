@@ -1,5 +1,6 @@
 package com.pg.employee.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg.employee.dto.request.label.CreateLabelDto;
 import com.pg.employee.dto.request.label.UpdateLabelDto;
 import com.pg.employee.dto.request.label.UpdateStatusLabelDto;
@@ -9,11 +10,14 @@ import com.pg.employee.entities.LabelEntity;
 import com.pg.employee.enums.EnumStatus;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
+import com.pg.employee.models.CreateNotification;
 import com.pg.employee.repository.LabelRepository;
 import com.pg.employee.service.LabelService;
 import com.pg.employee.utils.AccountUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +35,13 @@ public class LabelServiceImpl implements LabelService {
     @Autowired
     private LabelRepository labelRepository;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private KafkaAdmin kafkaAdmin;
+
+
     @Override
     public LabelEntity createLabel(CreateLabelDto createLabelDto, Account account) {
         try{
@@ -46,6 +57,18 @@ public class LabelServiceImpl implements LabelService {
                     .build();
 
             labelRepository.save(labelEntity);
+
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Nhãn làm việc mới")
+                    .notiContent("Nhãn làm việc mới '" + createLabelDto.getLb_name())
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
             return labelEntity;
         } catch (Exception e) {
             log.error("Error: ", e);
@@ -83,6 +106,17 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             labelRepository.save(labelEntity.get());
 
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Nhãn làm việc cập nhật")
+                    .notiContent("Nhãn làm việc '" + updateLabelDto.getLb_name() + "' đã được cập nhật")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
             return labelEntity.get();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -102,6 +136,16 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setDeletedBy(AccountUtils.convertAccountToJson(account));
             labelEntity.get().setDeletedAt(new Date(System.currentTimeMillis()));
             labelRepository.save(labelEntity.get());
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Nhãn làm việc đã xóa")
+                    .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được xóa")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
             return labelEntity.get();
         } catch (Exception e) {
             log.error("Error: ", e);
@@ -121,6 +165,16 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setDeletedBy(null);
             labelEntity.get().setDeletedAt(null);
             labelRepository.save(labelEntity.get());
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Nhãn làm việc đã khôi phục")
+                    .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được khôi phục")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
             return labelEntity.get();
         }catch (Exception e) {
             log.error("Error: ", e);
@@ -142,6 +196,17 @@ public class LabelServiceImpl implements LabelService {
             labelEntity.get().setLb_status(updateStatusLabelDto.getLb_status());
             labelEntity.get().setUpdatedBy(AccountUtils.convertAccountToJson(account));
             labelRepository.save(labelEntity.get());
+
+            CreateNotification createNotification = CreateNotification.builder()
+                    .notiAccId(account.getAccountRestaurantId())
+                    .notiTitle("Nhãn làm việc cập nhật trạng thái")
+                    .notiContent("Nhãn làm việc '" + labelEntity.get().getLb_name() + "' đã được cập nhật trạng thái")
+                    .notiType("label")
+                    .notiMetadata("no metadata")
+                    .sendObject("all_account")
+                    .build();
+            String json = new ObjectMapper().writeValueAsString(createNotification);
+            kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
 
             return labelEntity.get();
         } catch (Exception e) {
