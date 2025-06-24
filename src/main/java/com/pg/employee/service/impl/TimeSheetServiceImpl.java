@@ -118,8 +118,8 @@ public class TimeSheetServiceImpl implements TimeSheetService {
 
                 timeSheetRepository.save(timeSheetEntity); // update
                 // Gửi thông báo cho nhân viên
-                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) :
-                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + " trong ca làm việc " + foundSchedule.getWorkingShift().getWks_name() :
+                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + " trong ca làm việc " + foundSchedule.getWorkingShift().getWks_name();
                 CreateNotificationEmployee createNotificationEmployee = CreateNotificationEmployee.builder()
                         .notiEplId(employeeId)
                         .notiTitle("Chấm công")
@@ -143,8 +143,8 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                         .build();
                 timeSheetRepository.save(timeSheetEntity);
                 // Gửi thông báo cho nhân viên
-                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) :
-                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "Trong ca làm việc " + foundSchedule.getWorkingShift().getWks_name() :
+                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "Trong ca làm việc " + foundSchedule.getWorkingShift().getWks_name();
                 CreateNotificationEmployee createNotificationEmployee = CreateNotificationEmployee.builder()
                         .notiEplId(employeeId)
                         .notiTitle("Chấm công")
