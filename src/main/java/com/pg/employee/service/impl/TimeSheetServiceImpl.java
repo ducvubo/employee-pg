@@ -1,17 +1,23 @@
 package com.pg.employee.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg.employee.dto.request.timeSheet.CreateTimeSheetDto;
 import com.pg.employee.entities.TimeSheetEntity;
 import com.pg.employee.entities.WorkScheduleEntity;
 import com.pg.employee.exception.BadRequestError;
 import com.pg.employee.middleware.Account;
+import com.pg.employee.models.CreateNotification;
+import com.pg.employee.models.CreateNotificationEmployee;
 import com.pg.employee.repository.TimeSheetRepository;
 import com.pg.employee.repository.WorkScheduleRepository;
 import com.pg.employee.service.TimeSheetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -25,6 +31,12 @@ public class TimeSheetServiceImpl implements TimeSheetService {
 
     @Autowired
     private WorkScheduleRepository workScheduleRepository;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private KafkaAdmin kafkaAdmin;
 
     @Override
     public WorkScheduleEntity createTimeSheet(CreateTimeSheetDto createTimeSheetDto, Account account) {
@@ -105,6 +117,19 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                 timeSheetEntity.setUpdatedAt(new Date());
 
                 timeSheetRepository.save(timeSheetEntity); // update
+                // Gửi thông báo cho nhân viên
+                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) :
+                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                CreateNotificationEmployee createNotificationEmployee = CreateNotificationEmployee.builder()
+                        .notiEplId(employeeId)
+                        .notiTitle("Chấm công")
+                        .notiContent(content)
+                        .notiType("WORK_SCHEDULE")
+                        .notiMetadata("no metadata")
+                        .sendObject("one_account")
+                        .build();
+                String json = new ObjectMapper().writeValueAsString(createNotificationEmployee);
+                kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
                 return foundSchedule;
             } else {
                 TimeSheetEntity timeSheetEntity = TimeSheetEntity.builder()
@@ -117,6 +142,20 @@ public class TimeSheetServiceImpl implements TimeSheetService {
                         .updatedAt(new Date())
                         .build();
                 timeSheetRepository.save(timeSheetEntity);
+                // Gửi thông báo cho nhân viên
+                String content = isFirstHalf ? "Bạn đã chấm công vào lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) :
+                        "Bạn đã chấm công ra lúc " + zonedCheckInTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                CreateNotificationEmployee createNotificationEmployee = CreateNotificationEmployee.builder()
+                        .notiEplId(employeeId)
+                        .notiTitle("Chấm công")
+                        .notiContent(content)
+                        .notiType("WORK_SCHEDULE")
+                        .notiMetadata("no metadata")
+                        .sendObject("one_account")
+                        .build();
+                String json = new ObjectMapper().writeValueAsString(createNotificationEmployee);
+                kafkaTemplate.send("NOTIFICATION_ACCOUNT_CREATE", json);
+
                 return foundSchedule;
             }
         } catch (Exception e) {
