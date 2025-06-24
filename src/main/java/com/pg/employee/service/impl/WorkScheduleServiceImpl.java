@@ -376,7 +376,10 @@ public class WorkScheduleServiceImpl implements WorkScheduleService {
             if (status.equals("T")) {
                 for (String employeeId : workScheduleEntity.get().getListEmployeeId()) {
                     String date = new SimpleDateFormat("yyyy-MM-dd").format(workScheduleEntity.get().getWs_date());
-                    String content = "Bạn vửa có lịch làm việc: " + workScheduleEntity.get().getWorkingShift().getWks_name() + ":" + workScheduleEntity.get().getWorkingShift().getWks_start_time().replaceFirst(":00$", "") + " - " + workScheduleEntity.get().getWorkingShift().getWks_end_time().replaceFirst(":00$", "")+ " " + date;
+                    //Bạn vửa có lịch làm việc: Ca chiều: 14:00 - 18:00 01/10/2023
+                    String content = "Bạn vửa có lịch làm việc: " + workScheduleEntity.get().getWorkingShift().getWks_name() + ": " +
+                            workScheduleEntity.get().getWorkingShift().getWks_start_time().replaceFirst(":00$", "") + " - " +
+                            workScheduleEntity.get().getWorkingShift().getWks_end_time().replaceFirst(":00$", "") + " " + date;
                     CreateNotificationEmployee createNotificationEmployee = CreateNotificationEmployee.builder()
                             .notiEplId(employeeId)
                             .notiTitle("Lịch làm việc mới")
